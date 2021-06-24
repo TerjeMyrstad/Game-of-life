@@ -1,0 +1,154 @@
+<html>
+    <body id="myDivID">
+
+
+    <style>
+        body {
+            margin: 0%;
+        }
+    </style>
+
+    <script>
+        let game = true;
+        let state = 'dead';
+        let imgSrc = "";
+        var mouseX;
+        var MouseY;
+        let rawAdjacent = []
+        let pixels = 
+                    [   
+                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+                    ]
+
+        draw();
+        var mouseDown = 0;
+        document.body.onmousedown = function() { 
+            pixels[Math.ceil(mouseY / 48) - 1][Math.ceil(mouseX / 48) - 1] = 1;
+            undraw();
+            draw();
+        }
+
+        function generation() {
+            for(let i = 0; i < pixels.length; i++) {
+                for(let j = 0; j < pixels[0].length; j++) {
+                    var numOfAdjacent = adjacent(i, j)
+                    if (pixels[i][j] === 1 && numOfAdjacent === 2 || numOfAdjacent === 3) {
+                        pixels[i][j] = 1
+                    }
+                    else if (pixels[i][j] === 0 && numOfAdjacent === 3) {
+                        pixels[i][j] = 1;
+                    }
+                    else {
+                        pixels[i][j] = 0;
+            update()
+        }}}}
+        
+        function update() {
+            undraw();
+            draw();
+        }
+
+        function draw() {
+        for(let i = 0; i < pixels.length; i++) {
+            for(let j = 0; j < pixels[0].length; j++) {
+                if (pixels[i][j] === 1) {
+                    state = 'live';
+                }
+                else {
+                    state = 'dead';
+                }
+                imgSrc = "./images/" + state + ".png";
+                var myImage = new Image(48, 48);
+                myImage.src = imgSrc;
+                document.body.appendChild(myImage);
+            }}}
+
+        function undraw() {
+                var myDiv = document.getElementById("myDivID");
+                myDiv.innerHTML = "";
+                document.getElementById("myDivID").style.margin = "0%";
+
+        }
+
+        window.addEventListener('mousemove', function (e) {
+            mouseX = e.x;
+            mouseY = e.y;
+        })
+
+        function adjacent(index1, index2) { 
+            if (index2 - 1 < 0) {
+                if (index1 - 1 < 0) {
+                    rawAdjacent = [pixels[index1][index2 + 1], pixels[index1 + 1][index2], pixels[index1 + 1][index2 + 1]]
+                }
+                else if (index1 + 1 > pixels.length - 1) {
+                    rawAdjacent = [pixels[index1][index2 + 1], pixels[index1 - 1][index2], pixels[index1 - 1][index2 + 1]]
+                }
+                else {
+                    rawAdjacent = [pixels[index1][index2 + 1], pixels[index1 - 1][index2], pixels[index1 - 1][index2 + 1], pixels[index1 + 1][index2], pixels[index1 + 1][index2 + 1]]
+                }
+            }
+            else if (index1 - 1 < 0) {
+                if(index2 - 1 < 0) {
+                    rawAdjacent = [pixels[index1][index2 + 1], pixels[index1 + 1][index2], pixels[index1 + 1][index2 + 1]]
+                }
+                else if (index2 + 1 > pixels[0].length) {
+                    rawAdjacent = [pixels[index1][index2 - 1], pixels[index1 + 1][index2 - 1], pixels[index1 + 1][index2]]
+                }
+                else {
+                    rawAdjacent = [pixels[index1][index2 - 1], pixels[index1][index2 + 1], pixels[index1 + 1][index2 - 1], pixels[index1 + 1][index2], pixels[index1 + 1][index2 + 1]]
+                }
+            }
+            else if (index2 + 1 > pixels[0].length) {
+                if (index1 - 1 < 0) {
+                    rawAdjacent = [pixels[index1][index2 - 1], pixels[index1 + 1][index2 - 1], pixels[index1 + 1][index2]]
+                }
+                else if(index1 + 1 > pixels.length - 1) {
+                    rawAdjacent = [pixels[index1][index2 - 1], pixels[index1 - 1][index2 - 1], pixels[index1 - 1][index2]]
+                }
+                else {
+                    rawAdjacent = [pixels[index1][index2 - 1], pixels[index1 - 1][index2 - 1], pixels[index1 - 1][index2], pixels[index1 + 1][index2 - 1], pixels[index1 + 1][index2]]
+                }
+            }
+            else if (index1 + 1 > pixels.length - 1) {
+                if (index2 + 1 > pixels[0].length) {
+                    rawAdjacent = [pixels[index1][index2 - 1], pixels[index1 - 1][index2 - 1], pixels[index1 - 1][index2]]
+                }
+                else if (index2 - 1 < 0) {
+                    rawAdjacent = [pixels[index1][index2 + 1], pixels[index1 - 1][index2], pixels[index1 - 1][index2 + 1]]
+                }
+                else {
+                    rawAdjacent = [pixels[index1][index2 - 1], pixels[index1][index2 + 1], pixels[index1 - 1][index2 - 1], pixels[index1 - 1][index2], pixels[index1 - 1][index2 + 1]]
+                }
+            }
+            else {
+                rawAdjacent = [pixels[index1][index2 - 1], pixels[index1][index2 + 1], pixels[index1 - 1][index2 - 1], pixels[index1 - 1][index2], pixels[index1 - 1][index2 + 1], pixels[index1 + 1][index2 - 1], pixels[index1 + 1][index2], pixels[index1 + 1][index2 + 1]]
+            }
+                
+
+            const fixedAdjacent = adjacentCheck(rawAdjacent)
+            console.log(fixedAdjacent)
+            return fixedAdjacent
+        }
+
+        function adjacentCheck(list) {
+            const num = list.filter(n => {return n > 0});
+            return num.length;
+        }
+
+        window.addEventListener('keydown', (event) => {
+            if (event.key === 'k') {
+                generation();
+            }
+        })
+
+
+    </script>
+    </body>
+</html>
